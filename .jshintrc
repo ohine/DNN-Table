@@ -1,0 +1,10 @@
+{
+    "enforceall": true,
+    "nocomma": false,
+    "browser": true,
+    "jquery": true,
+    "undef": true,
+	"strict": true,
+	"onevar": false,
+	"trailing": true
+}

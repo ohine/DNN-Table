@@ -1,0 +1,36 @@
+<dotnetnuke type="Package" version="5.0">
+  <packages>
+    <package name="dnn-table" type="JavaScript_Library" version="1.0.0">
+      <friendlyName>jQuery DNN Table Plugin</friendlyName>
+      <description>DNN Table is a jQuery Plugin that provides support for a client-side data table.</description>
+      <owner>
+        <name>Chris Marfia</name>
+        <url>http://cmarfia.github.io/DNN-Table/</url>
+      </owner>
+      <license src="LICENSE.htm" />
+      <releaseNotes src="CHANGES.htm" />
+      <azureCompatible>true</azureCompatible>
+      <dependencies>
+        <dependency type="managedPackage" version="1.9.1">jQuery</dependency>
+      </dependencies>
+      <components>
+        <component type="JavaScript_Library">
+          <javaScriptLibrary>
+            <libraryName>dnn-table</libraryName>
+            <fileName>dnn-table.min.js</fileName>
+            <preferredScriptLocation>BodyBottom</preferredScriptLocation>
+            <objectName>jQuery.dnnTable</objectName>
+          </javaScriptLibrary>
+        </component>
+        <component type="JavaScriptFile">
+          <jsfiles>
+            <libraryFolderName>dnn-table</libraryFolderName>
+            <jsfile>
+              <name>dnn-table.min.js</name>
+            </jsfile>
+          </jsfiles>
+        </component>
+      </components>
+    </package>
+  </packages>
+</dotnetnuke>

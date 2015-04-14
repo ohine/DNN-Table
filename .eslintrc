@@ -1,0 +1,14 @@
+{
+    "rules": {
+        "quotes": [1, "single", "avoid-escape"],
+        "eol-last": false,
+		"strict": [2, "function"]
+    },
+    "env": {
+        "browser": true
+    },
+	"globals": {
+        "window": true,
+        "jQuery": true
+    }
+}
