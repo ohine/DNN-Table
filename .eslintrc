@@ -2,7 +2,9 @@
     "rules": {
         "quotes": [1, "single", "avoid-escape"],
         "eol-last": false,
-		"strict": [2, "function"]
+		"strict": [2, "function"],
+		"no-underscore-dangle": false,
+		"no-spaced-func": false
     },
     "env": {
         "browser": true
