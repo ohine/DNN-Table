@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Title of the document</title>
+	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="dnn-table.js"></script>
+</head>
+<body>
+	<div class="container">
+		<section>
+			<h1>dnnTable Example 1</h1>
+			<p>
+				Initializing the dnnTable with an array of objects. Also featuring the render ability with columns
+				<pre>
+&lt;table id="example1"&gt;&lt;/table&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+(function ($) {
+  $('#example1').dnnTable({
+    'data': [
+      { 'id': 1, 'firstName': 'Chris', 'lastName': 'Marfia', 'dob': '05/22/1991' },
+      { 'id': 2, 'firstName': 'Joe', 'lastName': 'Zacher', 'dob': '06/31/1990' },
+      { 'id': 3, 'firstName': 'Kristen', 'lastName': 'Ritchie', 'dob': '03/06/1998' },
+      { 'id': 4, 'firstName': 'Oliver', 'lastName': 'Hine', 'dob': '02/12/1985' }
+    ],
+    'totalRecordCount': 4,
+    'primaryKeyProp': 'id',
+    'columns': [
+      { 'title': 'Student ID', 'propName': 'id' },
+      { 'title': 'Full Name', 'render': function (dataRow) { 
+   	    return dataRow['firstName'] + ' ' + dataRow['lastName']; 
+      }},
+      { 'title': 'Date of Birth', 'propName': 'dob' }
+    ]
+  });
+}(jQuery));
+&lt;/script&gt;
+				</pre>
+			</p>
+			<table id="example1"></table>
+			<script type="text/javascript">
+				(function ($) {
+					$('#example1').dnnTable({
+						'data': [
+							{ 'id': 1, 'firstName': 'Chris', 'lastName': 'Marfia', 'dob': '05/22/1991' },
+							{ 'id': 2, 'firstName': 'Joe', 'lastName': 'Zacher', 'dob': '06/31/1990' },
+							{ 'id': 3, 'firstName': 'Kristen', 'lastName': 'Ritchie', 'dob': '03/06/1998' },
+							{ 'id': 4, 'firstName': 'Oliver', 'lastName': 'Hine', 'dob': '02/12/1985' }
+						],
+						'totalRecordCount': 4,
+						'primaryKeyProp': 'id',
+						'columns': [
+							{ 'title': 'Student ID', 'propName': 'id' },
+							{ 'title': 'Full Name', 'render': function (dataRow) { return dataRow['firstName'] + ' ' + dataRow['lastName']; } },
+							{ 'title': 'Date of Birth', 'propName': 'dob' }
+						]
+					});
+				}(jQuery));
+			</script>
+		</section>
+	</div>
+</body>
+</html>
