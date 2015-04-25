@@ -258,7 +258,7 @@
 			var btn = jQuery('<button>').addClass('btn').text(button.text);
 			
 			if (button.action !== null && button.action instanceof Function){
-				btn.click(button.action);
+				btn.click({btnIndex: buttonIndex, dataitem: dataRow}, button.action);
 			}
 			
 			result.append(btn);
