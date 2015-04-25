@@ -237,6 +237,8 @@
 
 			if (column.render !== null && column.render instanceof Function) {
 				data = column.render(dataRow);
+			} else if (column.buttons !== null && column.buttons instanceof Array && column.buttons.length > 0) {
+				data = self._renderButtons(column, dataRow);
 			} else if (dataRow[column.propName] instanceof Function) {
 				data = dataRow[column.propName]();
 			} else {
@@ -246,6 +248,23 @@
 			tableData.html(data || '');
 			tableRow.append(tableData);
 		});
+	};
+	
+	DnnTable.prototype._renderButtons = function (column, dataRow) {
+		var self = this;
+		var result = jQuery('<span>');
+		
+		$.each(column.buttons, function (buttonIndex, button) {
+			var btn = jQuery('<button>').addClass('btn').text(button.text);
+			
+			if (button.action !== null && button.action instanceof Function){
+				btn.click(button.action);
+			}
+			
+			result.append(btn);
+		});
+		
+		return result;
 	};
 
 	/*
