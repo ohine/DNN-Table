@@ -103,8 +103,10 @@
 		}
 
 		// Remove all child elements.
-		while (element.lastChild) {
-			element.removeChild(self.element.lastChild);
+		if (element.lastChild !== undefined) {
+			while (element.lastChild) {
+				element.removeChild(element.lastChild);
+			}
 		}
 
 		self._options = options;
@@ -116,13 +118,13 @@
 
 		self._rowKeyProperty = self._options.rowKeyProperty || '';
 
-		self._totalRecordCount = 0;
 		self._allowPaging = self.paging;
 		self._allowedPageSizes = self._options.allowedPageSizes;
 		self._defaultPageSize = self._options.defaultPageSize;
 		self._pageState = new PageState({ pageSize: self._defaultPageSize });
 
 		// TODO: Wrap the _table within a wrapper.
+		self._tableWrapper = $('<div>').addClass(self._css.tableWrapper);
 		self._table = $(element).addClass(self._css.table).addClass(self._css.unqiueTableId + self._id);
 		self._pagingWrapper = $('<div>').addClass(self._css.pagination).addClass(self._css.paginationSize);
 
@@ -180,7 +182,7 @@
 
 	DnnTable.prototype._renderTable = function (inputData) {
 		var self = this;
-
+		
 		self._table.append(self._renderTableHead());
 		self._table.append(self._renderTableBody(inputData));
 	};
@@ -212,8 +214,10 @@
 
 			return tableBody;
 		}
-
-		$.each(inputData, function (rowIndex, dataRow) {
+		var pageStart = (self._pageState.pageIndex-1)*self._pageState.pageSize;
+		
+		//console.log('displaying: ' + pageStart + ' and size: ' + self._pageState.pageSize + ' total: ' + inputData.length);
+		$.each(inputData.slice(pageStart, pageStart+self._pageState.pageSize), function (rowIndex, dataRow) {
 			var tableRow = $('<tr>');
 
 			self._renderDataRow(tableRow, dataRow);
@@ -249,31 +253,58 @@
 			tableRow.append(tableData);
 		});
 	};
-	
+
 	DnnTable.prototype._renderButtons = function (column, dataRow) {
-		var self = this;
-		var result = jQuery('<span>');
-		
+		var self = this,
+			result = jQuery('<span>');
+
 		$.each(column.buttons, function (buttonIndex, button) {
 			var btn = jQuery('<button>').addClass('btn').text(button.text);
-			
-			if (button.action !== null && button.action instanceof Function){
+
+			if (button.action !== null && button.action instanceof Function) {
 				btn.click({btnIndex: buttonIndex, dataitem: dataRow}, button.action);
 			}
-			
+
 			result.append(btn);
 		});
-		
+
 		return result;
 	};
 
-	/*
 	DnnTable.prototype._renderPaging = function (inputData) {
 		var self = this;
+		self._pageState.totalPages = Math.ceil(self._totalRecordCount / self._pageState.pageSize);
+		if (self._pageState.totalPages > 1) {
+			self._pagingWrapper.append(self._renderPageButtonList(self._totalRecordCount, self._pageState));
+			
+			var tableFooter = $('<tfoot>');
+			tableFooter.append('<tr>').children().append('<td colspan="' + self._columns.length + '">').children().append(self._pagingWrapper);
+			self._table.append(tableFooter);
+		}
 	};
 
 	DnnTable.prototype._renderPageButtonList = function (totalRecordCount, pagingState) {
-		var self = this;
+		var self = this,
+			result = jQuery('<ul>');
+
+		var startPage = pagingState.pageIndex - 4;
+		if (startPage < 1) { startPage = 1;}
+		var endPage = startPage + 9;
+		
+		for (var buttonIndex = 1; buttonIndex <= pagingState.totalPages; buttonIndex++) {
+			var newButton = self._renderPageButton(buttonIndex, buttonIndex === pagingState.pageIndex, buttonIndex === pagingState.pageIndex, buttonIndex, 'Page ' + buttonIndex);
+			if (buttonIndex >= startPage && buttonIndex < endPage) {
+				//do nothing
+			}
+			else {
+				if (pagingState.totalPages > 10) {
+					newButton.hide();
+				}
+			}
+			result.append(newButton);
+		}
+		
+		return result;
 	};
 
 	DnnTable.prototype._renderPageButtonGap = function () {
@@ -281,18 +312,41 @@
 	};
 
 	DnnTable.prototype._renderPageButton = function (pageIndex, isActivePage, isDisabled, label, tip) {
-		var self = this;
-	}
+		var self = this,
+			btn = jQuery('<li>').addClass('btn').text(label).data('pageIndex', pageIndex);
+		
+		if (!isActivePage) {
+			btn.click(function() {
+				self._pageState.pageIndex = $(this).data('pageIndex');
+				self._refresh();
+			});
+		}
+		else {
+			btn.addClass('disabled');
+		}
+
+		return btn;
+	};
 
 	DnnTable.prototype._renderPageSizePicker = function (pageSize) {
 		var self = this;
-	}
+	};
 
 	DnnTable.prototype._renderPageStatus = function (totalRecordCount, pagingState) {
 		var self = this;
-	}
-	*/
+	};
+	
+	DnnTable.prototype._refresh = function () {
+		var self = this;
 
+		$(self._table).find('tbody').remove();
+		$(self._table).find('tfoot').remove();
+		$(self._pagingWrapper).empty();
+		
+		self._table.append(self._renderTableBody(self._options.data));
+		self._renderPaging(self._options.data);
+	};
+	
 	DnnTable.prototype.initialize = function () {
 		var self = this;
 
@@ -304,6 +358,8 @@
 			typeof self._options.ajax.load !== 'undefined') {
 			self._api(self._options.ajax.load);
 		}
+		
+		self._table.wrapAll(self._tableWrapper);
 	};
 
 	DnnTable.prototype.load = function (inputData, totalRecordCount) {
@@ -318,14 +374,16 @@
 		}
 
 		self._clear();
-
+		
+		self._options.data = inputData;
 		self._totalRecordCount = totalRecordCount;
 
 		self._renderTable(inputData);
-		//self._renderPaging(inputData, self._pagingWrapper);
+		self._renderPaging(inputData);
 
 		self._table.show();
-		//self._pagingWrapper.show();
+
+		self._pagingWrapper.show();
 	};
 
 	DnnTable.prototype.destory = function () {
